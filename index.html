@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Simulador PDA – Ejercicio 2</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+">
+Ver Informes en Drive
+</button>
+
+
+<body>
+    <!-- ENCABEZADO -->
+    <header class="hero">
+        <h1>Simulador PDA</h1>
+        <p>L = { x<sup>2n</sup> y<sup>m</sup> x<sup>3m</sup> y<sup>n</sup> z<sup>+</sup> | n,m ≥ 1 }</p>
+    </header>
+    <button class="btn-drive"
+        onclick="window.open('https://drive.google.com/drive/folders/1kUN6Ra7g-1TXdHj74IRihBqguZAHvauk?usp=drive_link', '_blank')">
+        Ver Informes en Drive
+    </button>
+
+
+    <main class="layout">
+        <!-- PANEL IZQUIERDO: Grafo y tablas -->
+        <section class="panel graph">
+            <h2>Grafo</h2>
+            <div class="graph-container">
+
+                <!-- SVG del Grafo -->
+                <div class="graph-svg">
+                    <svg id="pda-svg" viewBox="0 0 1250 360" aria-label="Grafo PDA">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10"
+                                orient="auto">
+                                <path d="M 0 0 L 12 6 L 0 12 z" fill="#1A1446" />
+                            </marker>
+                        </defs>
+
+                        <!-- q1 a q0 -->
+                        <path d="M200,100 C210,100 270,111 240,200" class="edge" marker-end="url(#arrow)" />
+                        <text x="280" y="150" class="label">x, a; aa</text>
+                        <text x="280" y="135" class="label">x, Z; aZ</text>
+
+                        <!-- q0 a q1 -->
+                        <path d="M200,220 C160,230 110,210 130,130" class="edge" marker-end="url(#arrow)" />
+                        <text x="95" y="200" class="label">x, Z;Z</text>
+                        <text x="95" y="180" class="label">x, a; a</text>
+                        <!-- q0 a q2 -->
+                        <path d="M260,220 L340,160" class="edge" marker-end="url(#arrow)" />
+                        <text x="310" y="210" class="label">y, a; ba</text>
+
+                        <!-- BUCLE q2 -->
+                        <path d="M330,110 C350,9 410,8 370,90" class="edge" marker-end="url(#arrow)" />
+                        <text x="370" y="11" class="label">y, b; bb</text>
+
+                        <!-- q2 → q3 -->
+                        <path d="M520,35 L590,110" class="edge" marker-end="url(#arrow)" />
+                        <text x="450" y="90" class="label">x, b; b</text>
+
+                        <!-- q3 → q4 -->
+                        <path d="M390,110 L460,40" class="edge" marker-end="url(#arrow)" />
+                        <text x="580" y="60" class="label">x, b; b</text>
+
+                        <!-- q4 → q2 -->
+                        <path d="M575,150 L410,150" class="edge" marker-end="url(#arrow)" />
+                        <text x="485" y="165" class="label">x, b; λ</text>
+
+                        <!-- q2 → q5 -->
+                        <path d="M400,170 L520,260" class="edge" marker-end="url(#arrow)" />
+                        <text x="420" y="220" class="label">y, a; λ</text>
+                        <!-- BUCLE Q5 -->
+                        <path d="M540,245 C560,180 620,180 580,240" class="edge" marker-end="url(#arrow)" />
+                        <text x="580" y="180" class="label">y, a; λ</text>
+
+                        <!-- q5 → q6 -->
+                        <path d="M590,280 L730,280" class="edge" marker-end="url(#arrow)" />
+                        <text x="650" y="260" class="label">z, Z; Z</text>
+
+                        <!-- BUCLE q6 -->
+                        <path d="M750,245 C770,180 830,180 790,240" class="edge" marker-end="url(#arrow)" />
+                        <text x="789" y="180" class="label">z, Z; Z</text>
+
+                        <!-- q6 → q7 -->
+                        <path d="M810,280 L1055,280" class="edge" marker-end="url(#arrow)" />
+                        <text x="910" y="260" class="label">λ, Z; λ</text>
+
+                        <!-- ESTADOS -->
+                        <g id="q0" class="node" transform="translate(230,240)">
+                            <circle r="26" /><text class="nodelabel">q0</text>
+                            <path d="M -58 -10 L -28 0 L -58 10 Z" class="start" />
+                        </g>
+
+                        <g id="q1" class="node" transform="translate(160,100)">
+                            <circle r="26" /><text class="nodelabel">q1</text>
+                        </g>
+
+                        <g id="q2" class="node" transform="translate(370,140)">
+                            <circle r="26" /><text class="nodelabel">q2</text>
+                        </g>
+
+                        <g id="q3" class="node" transform="translate(490,10)">
+                            <circle r="26" /><text class="nodelabel">q3</text>
+                        </g>
+
+                        <g id="q4" class="node" transform="translate(620,140)">
+                            <circle r="26" /><text class="nodelabel">q4</text>
+                        </g>
+
+                        <g id="q5" class="node" transform="translate(550,280)">
+                            <circle r="26" /><text class="nodelabel">q5</text>
+                        </g>
+
+                        <g id="q6" class="node" transform="translate(770,280)">
+                            <circle r="26" /><text class="nodelabel">q6</text>
+                        </g>
+
+                        <g id="q7" class="node accept" transform="translate(1100,280)">
+                            <circle r="26" />
+                            <circle r="30" class="double" /><text class="nodelabel">q7</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- CUADROS INFORMATIVOS -->
+                <div class="graph-details">
+                    <!-- Descripción -->
+                    <div class="info-box">
+                        <h3>Descripción de Autómata</h3>
+                        <table class="elements-table">
+                            <tr>
+                                <th>Elemento</th>
+                                <th>Definición</th>
+                            </tr>
+                            <tr>
+                                <td>Q</td>
+                                <td>{ q0, q1, q2, q3, q4, q5, q6, q7 }</td>
+                            </tr>
+                            <tr>
+                                <td>Σ</td>
+                                <td>{ x, y, z }</td>
+                            </tr>
+                            <tr>
+                                <td>Γ</td>
+                                <td>{ a,b,Z }</td>
+                            </tr>
+                            <tr>
+                                <td>q₀</td>
+                                <td>q0</td>
+                            </tr>
+                            <tr>
+                                <td>Z₀</td>
+                                <td>Z</td>
+                            </tr>
+                            <tr>
+                                <td>F</td>
+                                <td>{ q7 }</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>Tabla de Transición</h3>
+                        <table class="transition-table small">
+                            <tr>
+                                <th>De</th>
+                                <th>Entrada</th>
+                                <th>Des/Apila</th>
+                                <th>A</th>
+                            </tr>
+                            <tr>
+                                <td>→ q0</td>
+                                <td>x</td>
+                                <td>Z → Z</td>
+                                <td>q1</td>
+                            </tr>
+                            <tr>
+                                <td>→ q1</td>
+                                <td>x</td>
+                                <td>Z → aZ</td>
+                                <td>q1</td>
+                            </tr>
+                            <tr>
+                                <td>→ q0</td>
+                                <td>x</td>
+                                <td>a → a</td>
+                                <td>q1</td>
+                            </tr>
+                            <tr>
+                                <td>q1</td>
+                                <td>x</td>
+                                <td>a → aa</td>
+                                <td>q0</td>
+                            </tr>
+                            <tr>
+                                <td>q0</td>
+                                <td>y</td>
+                                <td>a → ba</td>
+                                <td>q2</td>
+                            </tr>
+                            <tr>
+                                <td>q2</td>
+                                <td>y</td>
+                                <td>b → bb</td>
+                                <td>q2</td>
+                            </tr>
+                            <tr>
+                                <td>q2</td>
+                                <td>x</td>
+                                <td>b → b</td>
+                                <td>q3</td>
+                            </tr>
+                            <tr>
+                                <td>q3</td>
+                                <td>x</td>
+                                <td>b → b</td>
+                                <td>q4</td>
+                            </tr>
+                            <tr>
+                                <td>q4</td>
+                                <td>x</td>
+                                <td>b → λ</td>
+                                <td>q2</td>
+                            </tr>
+
+                            <tr>
+                                <td>q2</td>
+                                <td>y</td>
+                                <td>a → λ</td>
+                                <td>q5</td>
+                            </tr>
+                            <tr>
+                                <td>q5</td>
+                                <td>y</td>
+                                <td>a → λ</td>
+                                <td>q5</td>
+                            </tr>
+                            <tr>
+                                <td>q5</td>
+                                <td>z</td>
+                                <td>Z → Z</td>
+                                <td>q6</td>
+                            </tr>
+                            <tr>
+                                <td>q6</td>
+                                <td>z</td>
+                                <td>Z → Z</td>
+                                <td>q6</td>
+                            </tr>
+                            <tr>
+                                <td>q6</td>
+                                <td>λ</td>
+                                <td>Z → λ</td>
+                                <td>q7</td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                    <!-- Función δ -->
+                    <div class="info-box">
+                        <h3>Función de Transición δ</h3>
+                        <table class="transition-table formal">
+                            <tr>
+                                <th>δ(q, a, γ)</th>
+                                <th>→ (q’, β)</th>
+                            </tr>
+                            <tr>
+                                <td>δ(q0, x, Z)</td>
+                                <td>(q1, Z)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q1, x, Z)</td>
+                                <td>(q0, aZ)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q0, x, a)</td>
+                                <td>(q1, a)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q1, x, a)</td>
+                                <td>(q0, aa)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q0, y, a)</td>
+                                <td>(q2, ba)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q2, y, b)</td>
+                                <td>(q2, bb)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q2, x, b)</td>
+                                <td>(q3, b)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q3, x, b)</td>
+                                <td>(q4, b)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q4, x, b)</td>
+                                <td>(q2, λ)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q2, y, a)</td>
+                                <td>(q5, λ)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q5, y, a)</td>
+                                <td>(q5, λ)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q5, z, Z)</td>
+                                <td>(q6, Z)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q6, z, Z)</td>
+                                <td>(q6, Z)</td>
+                            </tr>
+                            <tr>
+                                <td>δ(q6, λ, Z)</td>
+                                <td>(q7, λ)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL DERECHO -->
+        <section class="panel controls">
+            <h2># Ingresar cadena</h2>
+            <div class="row">
+                <input id="cadena" placeholder="ej. xxyxxxyz" />
+                <button id="btn-load">Cargar</button>
+            </div>
+            <div class="row">
+                <button id="btn-step">Paso</button>
+                <button id="btn-run">Ejecutar todo</button>
+                <button id="btn-reset" class="ghost">Reset</button>
+            </div>
+
+            <!-- CUADROS DE PILA, VALIDACIÓN, ID Y DERIVACIÓN -->
+            <div class="grid-cuadros">
+                <div class="stack-box">
+                    <h3>Pila</h3>
+                    <div id="stack" class="stack"></div>
+                </div>
+                <div class="alert-box">
+                    <h3>Validación de Cadena</h3>
+                    <div id="alerta" class="alert-content"><em>Esperando cadena...</em></div>
+                </div>
+                <div class="id-box">
+                    <h3>Descripciones Instantáneas (ID)</h3>
+                    <pre id="log" class="log"></pre>
+                </div>
+                <div class="derivacion-box">
+                    <h3>Derivación por la Izquierda</h3>
+                    <div id="derivacion" class="derivacion-content">
+                        <h4>Gramática G:</h4>
+                        <pre class="gramatica">
+                G = (V, Σ, R, S)
+
+                - V = {S, A, B, C}
+                - Σ = {x, y, z}
+                - R:
+                S → xx A y C
+                A → xx A y | B
+                B → y B xxx | y xxx
+                C → z C | z
+                        </pre>
+                        <h4>Derivación por la Izquierda:</h4>
+                        <div id="derivacion-lista">
+                            <em>Esperando cadena...</em>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="id-formal-box">
+                    <h3>Descripción Instantánea (ID Formal por Gramática)</h3>
+                    <pre id="id-formal" class="log"></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- DESCRIPCIÓN FINAL -->
+    <section class="descripcion-final">
+        <h2>Descripción de Funcionamiento</h2>
+        <p>El autómata inicia en <strong>q0</strong> leyendo las ‘x’ iniciales y apilando un símbolo ‘a’ por cada una.
+            Luego alterna entre <strong>q0</strong> y <strong>q1</strong> para garantizar que la cantidad sea par (2n).
+        </p>
+        <p>Al encontrar la primera ‘y’, pasa a <strong>q2</strong>, donde apila un símbolo ‘b’ por cada ‘y’ del bloque
+            y<sup>m</sup>.
+            Cuando detecta el bloque <strong>x<sup>3m</sup></strong>, entra en <strong>q3</strong> y
+            <strong>q4</strong>, donde consume grupos de tres ‘x’ y desapila un ‘b’ por cada grupo.
+        </p>
+        <p>Después, al leer el bloque <strong>y<sup>n</sup></strong>, pasa a <strong>q5</strong>, desapilando un símbolo
+            ‘a’ por cada ‘y’.
+            Finalmente, al llegar al bloque <strong>z<sup>+</sup></strong>, entra a <strong>q6</strong>, consume todas
+            las ‘z’ y verifica que la pila contenga únicamente el símbolo base ‘Z’.
+            Si la entrada se ha consumido completamente y la pila se vacía, el autómata acepta en el estado
+            <strong>q7</strong>.
+        </p>
+    </section>
+    <script src="pda.js"></script>
+</body>
+
+</html>
